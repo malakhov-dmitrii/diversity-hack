@@ -1,3 +1,4 @@
+import axios from 'axios';
 import {
   POSTER_MAKE_REQUEST_BEGIN,
   POSTER_MAKE_REQUEST_SUCCESS,
@@ -7,10 +8,14 @@ import {
 
 // Rekit uses redux-thunk for async actions by default: https://github.com/gaearon/redux-thunk
 // If you prefer redux-saga, you can use rekit-plugin-redux-saga: https://github.com/supnate/rekit-plugin-redux-saga
-export function makeRequest(args = {}) {
+export function makeRequest(ref, question) {
   return (dispatch) => { // optionally you can have getState as the second argument
     dispatch({
       type: POSTER_MAKE_REQUEST_BEGIN,
+      payload: {
+        text1: [ref],
+        text2: [question],
+      }
     });
 
     // Return a promise so that you could control UI flow without states in the store.
@@ -21,7 +26,7 @@ export function makeRequest(args = {}) {
       // doRequest is a placeholder Promise. You should replace it with your own logic.
       // See the real-word example at:  https://github.com/supnate/rekit/blob/master/src/features/home/redux/fetchRedditReactjsList.js
       // args.error here is only for test coverage purpose.
-      const doRequest = args.error ? Promise.reject(new Error()) : Promise.resolve();
+      const doRequest = axios.get('http://0.0.0.0:5000/answer');
       doRequest.then(
         (res) => {
           dispatch({
@@ -69,6 +74,7 @@ export function reducer(state, action) {
         ...state,
         makeRequestPending: false,
         makeRequestError: null,
+        answer: action.data[0][0],
       };
 
     case POSTER_MAKE_REQUEST_FAILURE:

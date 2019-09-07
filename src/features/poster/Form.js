@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
@@ -12,7 +12,13 @@ const useStyles = makeStyles({
     padding: '20px',
     minWidth: 275,
     maxWidth: 800,
-    margin: "200px auto",
+    margin: "200px auto 0",
+  },
+  cardAnswer: {
+    padding: '20px',
+    minWidth: 275,
+    maxWidth: 800,
+    margin: "50px auto 0",
   },
   questionWrapper: {
     display: 'flex',
@@ -39,28 +45,71 @@ const useStyles = makeStyles({
   pos: {
     marginBottom: 12,
   },
+  textarea: {
+    width: '100%',
+  }
 });
 
-export const Form = () => {
+export const Form = (props) => {
   const classes = useStyles();
+
+  const [reference, setReference] = useState('');
+  const [question, setQuestion] = useState('');
+
+  const handleRefChange = (event) => {
+    setReference(event.target.value);
+  };
+
+  const handleQChange = (event) => {
+    setQuestion(event.target.value);
+  };
+
+  const handleSubmit = () => {
+    props.actions.makeRequest(reference, question);
+  };
 
   return (
     <Container maxWidth='lg'>
       <Card className={classes.card}>
+        <div className={classes.textarea}>
+          <TextField
+            id="standard-multiline-flexible"
+            label="Reference text"
+            multiline
+            rowsMax="4"
+            value={reference}
+            onChange={handleRefChange}
+            className={classes.textarea}
+            margin="normal"
+          />
+        </div>
         <div className={classes.questionWrapper}>
-          <Typography className={classes.title}>Ask a question:</Typography>
+          <Typography variant="h2" className={classes.title}>Ask a question:</Typography>
           <TextField
             id="outlined-name"
             label="Question"
             className={classes.input}
-            // value={values.name}
-            // onChange={handleChange('name')}
+            value={question}
+            onChange={handleQChange}
             margin="normal"
             variant="outlined"
           />
         </div>
-        <Button href='' className={classes.button} color="primary" variant="contained">Get an answer</Button>
+        <Button href='' className={classes.button} onClick={handleSubmit} color="primary" variant="contained">Get an answer</Button>
       </Card>
+
+      {
+        !!props.poster.answer.length && (
+          <Card className={classes.cardAnswer}>
+            <Typography variant="h5">
+              Here is the answer:
+            </Typography>
+            <Typography>
+              Lorem ipsum dolor sit amet, consectetur adipisicing elit. Delectus doloribus eaque error est eveniet in incidunt officia qui rerum unde!
+            </Typography>
+          </Card>
+        )
+      }
     </Container>
   );
 };

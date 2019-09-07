@@ -8,6 +8,7 @@
 const initialState = {
   makeRequestPending: false,
   makeRequestError: null,
+  answer: '',
 };
 
 export default initialState;
